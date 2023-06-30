@@ -80,7 +80,7 @@
 
 					/* Read Block */
 					let ReadOption = {
-						Block : [ 0x0B, 0x0C, 0x0D ] ,
+						Block : [ 0x0B, 0x0C, 0x0D, 0x0E ] ,
 					}
 					let ret = await arukasNFC.readLiteS( ReadOption ) ;				// カードからの読み込み
 					arukasNFC.putErrorMsg( ret.Error ) ;
