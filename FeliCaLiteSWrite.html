@@ -68,6 +68,7 @@
 						arukasNFC.FelicaConfig.SystemCode[1] === 0xB4 ) {			// 間違って書き込んでカードの破損を防ぐ
 					/* Write Block */
 					var writeString = encodeURI('これはテスト');
+					console.log(writeString)
 					const WriteOption = {
 						Datas : [
 							{ Block: 0x0B, Data: writeString } ,
