@@ -1,0 +1,175 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<head>
+	<title>JavaScript FeliCa Lite-S 操作モジュール　arukasNFC Sample (Write)</title>
+</head>
+<body>
+	<h3>
+		<div class="header-title">
+			JavaScript FeliCa Lite-S 操作モジュール　arukasNFC Sample (Write )
+		</div>
+	</h3>
+
+    <div class="mainArea">
+		<div class="button1">
+			<span class="col-1" style="display: inline-block; width: 500px">FeliCa Lite-S ICカード サンプル　書き込み</span>
+			<button id="FeliCa">実行</button>
+		</div>
+		<br><br>
+		<div class="detect">
+			<div id="detect-title" class="detect-title" style="display: inline;"></div><br>
+			<div id="detect" class="detect-info" style="display: inline;"></div>
+		</div>
+		<br>
+		<div class="communicate">
+			<div id="communicate-title" class="communicate-title" style="display: inline;"></div><br>
+			<div id="communicate" class="communicate-response" style="display: inline;"></div>
+		</div>
+	</div>
+
+<script type='module'>
+	import { ArukasNFCLiteS } from './modules/ArukasNFCLiteS.js';
+
+	let detectTitle = document.getElementById('detect-title');
+	let detectMessage = document.getElementById('detect');
+	let communicateTitle = document.getElementById('communicate-title');
+	let communicateMessage = document.getElementById('communicate');
+
+	const BEEPSOUND = "SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU2LjQwLjEwMQAAAAAAAAAAAAAA//NwwAAAAAAAAAAAAEluZm8AAAAPAAAADgAAAiQAYWFhYWFhYW1tbW1tbW15eXl5eXl5hoaGhoaGhpKSkpKSkpKenp6enp6eqqqqqqqqqra2tra2tra2wsLCwsLCws/Pz8/Pz8/b29vb29vb5+fn5+fn5/Pz8/Pz8/P/////////AAAAAExhdmM1Ni42MAAAAAAAAAAAAAAAACQAAAAAAAAAAAIkrpFKWwAAAAAAAAAAAAAAAAD/8xDEAALIAqgBQBAA//8/WH///UCAIAgq///zEsQBAzlK2AGAEAD/yvo+C///8WX5fwX/yP/zEMQCA2k+rAHAUACBbNb/q////0JgUmqH//MQxAEDATqsCAAOcMIP/ikVK3///icOwD7/8xDEAgNROqAQABpwNf/0AGSe///+M5Bq+P/zEMQBAwk6kAAAGnB+f/zIJd////h9KNX4//MQxAECyTqMAAAUcA7/8qEj2///g6eq+EX/8xDEAgNJOoQAA1UAn/8gAAmd///4OifVEP/zEMQBAuk6nDAADnBB8Bv/4a////FIeleB//MSxAIDETp8AANVCEZ//MQ3G///+wdq+Ai3//MQxAMC0TqAAAKPAP5QFf///xMGqv/cJv//8xDEBALhOowBQDgA54Pv///xMXr/768Ic//zEMQFA9kWhAGAOADqb8VjB+pv/4jdFUxB//MQxAIAAANIAcAAAE1FMy45OS41VVVVVVU=";
+	const sounduri = "data:audio/mp3;base64," + BEEPSOUND ;
+	const Beep = new Audio( sounduri ) ;
+
+	document.getElementById('FeliCa').addEventListener('click', function () {
+		felica_card();
+		return;
+	});
+
+	async function felica_card() {
+		console.log('[Write Read a FeliCa Lite-S Card] Begin');
+
+		let lib = null ,
+			res ;
+
+		detectTitle.innerText = '';
+		detectMessage.innerText = '';
+		communicateTitle.innerText = '';
+		communicateMessage.innerText = '';
+
+		try {
+			let arukasNFC = new ArukasNFCLiteS( { warning: false }) ;
+
+			res = await arukasNFC.connectUSBDevice() ;								// USBデバイスコネクト
+			res = await arukasNFC.openUSBDevice() ;									// USBデバイスオープン
+
+			let pres = await arukasNFC.pollingLiteS() ;								// ポーリング
+			if ( arukasNFC.FelicaConfig.Polling === true ) {						// ポーリングが成功しているかチェック
+				if ( arukasNFC.FelicaConfig.SystemCode[0] === 0x88 &&				// カードのシステムコードから FeliCa Lite-S かの判定
+						arukasNFC.FelicaConfig.SystemCode[1] === 0xB4 ) {			// 間違って書き込んでカードの破損を防ぐ
+					/* Write Block */
+					const WriteOption = {
+						Datas : [
+							{ Block: 0x0B, Data: 'U.S.S.Enterprise' } ,
+							{ Block: 0x0C, Data: 'James.T.Kirk' } ,
+							{ Block: 0x0D, Data: 'NCC-1701' } ,
+						]
+					}
+					let wres = await arukasNFC.writeLiteS( WriteOption ) ;			// カードへの書き込み
+					arukasNFC.putErrorMsgToArray( wres ) ;
+
+					/* Read Block */
+					let ReadOption = {
+						Block : [ 0x0B, 0x0C, 0x0D ] ,
+					}
+					let ret = await arukasNFC.readLiteS( ReadOption ) ;				// カードからの読み込み
+					arukasNFC.putErrorMsg( ret.Error ) ;
+					communicateTitle.innerText = 'Reading...';
+					communicateMessage.innerText = 'Send    : ' + ret.CommandString +
+												   '\nReceive : ' + _array_tohexs(ret.Data,0,ret.Data.length,' ') + '\n' + ret.DataString ;
+
+					Beep.play() ;
+					console.log('Success');
+				} else {
+					console.log('This Card is not Felica Lite-S.' ) ;
+				}
+			} else {
+				console.log('Polling Fail');
+			}
+
+			/* close() */
+			await arukasNFC.closeUSBDevice();										// USBデバイスのクローズ
+		} catch(error) {
+			console.error(error) ;
+		}
+		console.log('[Write Read a FeliCa Lite-S Card] End');
+		return;
+	}
+
+	function _binToString( argData ) {
+		for (let i = 0; i < argData.length; i++) {
+			if ( argData[i] == 0x00 ) {
+				argData[i] = 0x20 ;
+			}
+		}
+		let text_decoder = new TextDecoder( "utf-8" );
+		let retVal = text_decoder.decode( Uint8Array.from( argData ).buffer );
+		retVal = retVal.trim(' ') ;
+		cL('*************[' + retVal + ']');
+		return retVal ;
+	}
+
+	function _def_val(param, def)
+	{
+		return (param === undefined) ? def : param;
+	}
+
+	function _array_slice(array, offset, length)
+	{
+		let result;
+
+		length = _def_val(length, array.length - offset);
+		result = [];
+		_array_copy(result, 0, array, offset, length);
+		
+		return result;
+	}
+
+	function _bytes2hexs(bytes, sep) {
+		let str;
+
+		sep = _def_val(sep, ' ');
+
+		return bytes.map(function(byte) {
+			str = byte.toString(16);
+			return byte < 0x10 ? '0'+str : str;
+		}).join(sep).toUpperCase();
+	}
+
+	function _array_tohexs(array, offset, length, sep )
+	{
+		let temp;
+
+		offset = _def_val(offset, 0);
+		length = _def_val(length, array.length - offset);
+		sep = _def_val(sep, '');
+
+		temp = _array_slice(array, offset, length );
+		return _bytes2hexs(temp, sep);
+	}
+
+	function _array_copy(dest, dest_offset, src, src_offset, length)
+	{
+		let idx;
+
+		src_offset = _def_val(src_offset, 0);
+		length = _def_val(length, src.length);
+
+		for (idx = 0; idx < length; idx++) {
+			dest[dest_offset + idx] = src[src_offset + idx];
+		}
+
+		return dest;
+	}
+</script>
+</body>
+</html>
