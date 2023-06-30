@@ -69,10 +69,10 @@
 					/* Write Block */
 					const WriteOption = {
 						Datas : [
-							{ Block: 0x0B, Data: 'Hello' } ,
-							{ Block: 0x0C, Data: '' } ,
-							{ Block: 0x0D, Data: '' } ,
-							{ Block: 0x0E, Data: 'world' } ,
+							{ Block: 0x0B, Data: '%E3%81%93%E3%82%' } ,
+							{ Block: 0x0C, Data: '8C%E3%81%AF%E3%8' } ,
+							{ Block: 0x0D, Data: '3%86%E3%82%B9%E3' } ,
+							{ Block: 0x0E, Data: '%83%88' } ,
 						]
 					}
 					let wres = await arukasNFC.writeLiteS( WriteOption ) ;			// カードへの書き込み
