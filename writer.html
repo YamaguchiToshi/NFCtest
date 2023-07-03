@@ -8,7 +8,7 @@
   </head>
   <body>
 
-<input class="form-control" type="text" placeholder="Default input" maxlength="20" >
+<input class="form-control" type="text" placeholder="Default input" maxlength="5" id="writeText" >
 <button id="FeliCa">書く</button>
 
 <div class="communicate">
@@ -53,6 +53,10 @@
 				if ( arukasNFC.FelicaConfig.SystemCode[0] === 0x88 &&				// カードのシステムコードから FeliCa Lite-S かの判定
 						arukasNFC.FelicaConfig.SystemCode[1] === 0xB4 ) {			// 間違って書き込んでカードの破損を防ぐ
 					/* Write Block */
+					var bufOrig = document.getElementById('writeText');
+					var buf = encodeURIComponent(bufOrig);
+					console.log( buf );
+					
 					const WriteOption = {
 						Datas : [
 							{ Block: 0x0B, Data: '%E5%B1%B1%E5%8F%' } ,
