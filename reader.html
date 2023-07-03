@@ -11,11 +11,6 @@
 <button id="FeliCa">読む</button>
 
 
-<div class="detect">
-	<div id="detect-title" class="detect-title" style="display: inline;"></div><br>
-	<div id="detect" class="detect-info" style="display: inline;"></div>
-</div>
-
 <div class="communicate">
 	<div id="communicate-title" class="communicate-title" style="display: inline;"></div><br>
 	<div id="communicate" class="communicate-response" style="display: inline;"></div>
@@ -27,8 +22,6 @@
 <script type='module'>
 	import { ArukasNFCLiteS } from './modules/ArukasNFCLiteS.js';
 
-	let detectTitle = document.getElementById('detect-title');
-	let detectMessage = document.getElementById('detect');
 	let communicateTitle = document.getElementById('communicate-title');
 	let communicateMessage = document.getElementById('communicate');
 
@@ -47,8 +40,6 @@
 		let lib = null ,
 			res ;
 
-		detectTitle.innerText = '';
-		detectMessage.innerText = '';
 		communicateTitle.innerText = '';
 		communicateMessage.innerText = '';
 
