@@ -76,7 +76,7 @@
 
 					/* Read Block */
 					let ReadOption = {
-						Block : [ 0x0A, 0x0B, 0x0C, 0x0D ] ,
+						Block : [ 0x09, 0x0A, 0x0B, 0x0C, 0x0D ] ,
 					}
 					let ret = await arukasNFC.readLiteS( ReadOption ) ;				// カードからの読み込み
 					arukasNFC.putErrorMsg( ret.Error ) ;
