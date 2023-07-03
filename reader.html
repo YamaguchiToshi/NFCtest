@@ -53,7 +53,7 @@
 				communicateTitle.innerText = 'Polling...';
 				/* Read Block */
 				let ReadOption = {
-					Block : [ 0x0B, 0x0C, 0x0D ] ,	// Specify the block address to read
+					Block : [ 0x0A, 0x0B, 0x0C, 0x0D ] ,	// Specify the block address to read
 				}
 				let ret = await arukasNFC.readLiteS( ReadOption ) ;
 				if ( ret.Error === false ) {
