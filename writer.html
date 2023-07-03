@@ -53,14 +53,20 @@
 					/* Write Block */
 					var bufOrig = document.getElementById('writeText').value;
 					var buf = encodeURIComponent(bufOrig);
-					console.log( buf );
+					
+					var ws = ["","",""];
+					
+					for( i = 0; i < (buf.length/3); ++i ){
+						ws[i] = buf.substr( 16*i, 16 );
+					}
+							
+					console.log( ws );
 					
 					const WriteOption = {
 						Datas : [
-							{ Block: 0x0B, Data: '%E5%B1%B1%E5%8F%' } ,
-							{ Block: 0x0C, Data: 'A3%E4%BF%8A%E5%8' } ,
-							{ Block: 0x0D, Data: '5%89' } ,
-							{ Block: 0x0E, Data: '' } ,
+							{ Block: 0x0B, Data: ws[0] } ,
+							{ Block: 0x0C, Data: ws[1] } ,
+							{ Block: 0x0D, Data: ws[2] } ,
 						]
 					}
 					let wres = await arukasNFC.writeLiteS( WriteOption ) ;			// カードへの書き込み
