@@ -58,7 +58,7 @@
 				let ret = await arukasNFC.readLiteS( ReadOption ) ;
 				if ( ret.Error === false ) {
 					Beep.play() ;
-					console.log( ret.DataString[1] );
+					console.log( ret.DataString );
 					communicateTitle.innerText = 'Reading...';
 					communicateMessage.innerText = 'Send    : ' + ret.CommandString +
 												   '\nReceive : ' + _array_tohexs(ret.Data,0,ret.Data.length,' ') + '\n' + ret.DataString ;
