@@ -8,7 +8,7 @@
   </head>
   <body>
 
-<input class="form-control" type="text" placeholder="Default input" maxlength="8" id="writeText" >
+<input class="form-control" type="text" placeholder="Default input" maxlength="7" id="writeText" >
 <button id="FeliCa">書く</button>
 
 <div class="communicate">
@@ -54,7 +54,7 @@
 					var bufOrig = document.getElementById('writeText').value;
 					var buf = encodeURIComponent(bufOrig);
 					
-					var ws = ["","","","",""];
+					var ws = ["","","",""];
 					
 					for( let i = 0; i < (buf.length/16); ++i ){
 						ws[i] = buf.substr( 16*i, 16 );
@@ -64,11 +64,10 @@
 					
 					const WriteOption = {
 						Datas : [
-							{ Block: 0x08, Data: ws[0] } ,
-							{ Block: 0x0A, Data: ws[1] } ,
-							{ Block: 0x0B, Data: ws[2] } ,
-							{ Block: 0x0C, Data: ws[3] } ,
-							{ Block: 0x0D, Data: ws[4] } ,
+							{ Block: 0x0A, Data: ws[0] } ,
+							{ Block: 0x0B, Data: ws[1] } ,
+							{ Block: 0x0C, Data: ws[2] } ,
+							{ Block: 0x0D, Data: ws[3] } ,
 						]
 					}
 					let wres = await arukasNFC.writeLiteS( WriteOption ) ;			// カードへの書き込み
@@ -76,7 +75,7 @@
 
 					/* Read Block */
 					let ReadOption = {
-						Block : [ 0x08, 0x0A, 0x0B, 0x0C, 0x0D ] ,
+						Block : [ 0x0A, 0x0B, 0x0C, 0x0D ] ,
 					}
 					let ret = await arukasNFC.readLiteS( ReadOption ) ;				// カードからの読み込み
 					arukasNFC.putErrorMsg( ret.Error ) ;
