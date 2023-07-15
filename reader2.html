@@ -7,14 +7,17 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
   </head>
   <body>
+  
+	<div class="container">
 
-<button id="FeliCa">読む</button>
+		<button class="btn btn-primary" id="FeliCa">読む</button>
+		<div class="communicate">
+			<div id="communicate-title" class="communicate-title" style="display: inline;"></div><br>
+			<div id="communicate" class="communicate-response" style="display: inline;"></div>
+		</div>
 
+	</div>
 
-<div class="communicate">
-	<div id="communicate-title" class="communicate-title" style="display: inline;"></div><br>
-	<div id="communicate" class="communicate-response" style="display: inline;"></div>
-</div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
     
@@ -25,7 +28,7 @@
 	let communicateTitle = document.getElementById('communicate-title');
 	let communicateMessage = document.getElementById('communicate');
 
-	const Beep = new Audio( "beep.mp3" ) ;
+	const Beep = new Audio( "beep02.mp3" ) ;
 
 	document.getElementById('FeliCa').addEventListener('click', () => {
 		felica_card();
@@ -53,16 +56,18 @@
 				communicateTitle.innerText = 'Polling...';
 				/* Read Block */
 				let ReadOption = {
-					Block : [ 0x0B, 0x0C, 0x0D ] ,	// Specify the block address to read
+					Block : [ 0x0A, 0x0B, 0x0C, 0x0D ] ,	// Specify the block address to read
 				}
 				let ret = await arukasNFC.readLiteS( ReadOption ) ;
 				if ( ret.Error === false ) {
 					Beep.play() ;
-					var buf = ret.DataString.split(",");
-					console.log(buf);
+					var bufArr = ret.DataString.split(",");
+					var buf = bufArr.join("");
+					console.log( decodeURIComponent(buf) );
 					communicateTitle.innerText = 'Reading...';
 					communicateMessage.innerText = 'Send    : ' + ret.CommandString +
-												   '\nReceive : ' + _array_tohexs(ret.Data,0,ret.Data.length,' ') + '\n' + ret.DataString ;
+												   '\nReceive : ' + _array_tohexs(ret.Data,0,ret.Data.length,' ') + '\n' + ret.DataString + '\n' +
+												   decodeURIComponent(buf);
 				} else {
 					communicateTitle.innerText = 'Reading...';
 					communicateMessage.innerText = 'Fail    : ' ;
